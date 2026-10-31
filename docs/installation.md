@@ -6,17 +6,20 @@
 - `doctl` v1.173.0 or newer.
 - A DigitalOcean personal access token with the MicroVM scopes needed to create and manage MicroVMs.
 - A separate endpoint token with only the `microvm:access` scope.
-- A private OCI image registry if you do not publish the image publicly.
+- GitHub Container Registry (GHCR), used by the repository's publish workflow.
 
 MicroVMs run `linux/amd64` container images. During the public preview, only the declared HTTP port is reachable through the MicroVM endpoint.
 
 ## Build and publish
 
-Build for the supported architecture and push to your registry:
+The recommended path does not require Docker on your local machine. The GitHub Actions workflow builds for `linux/amd64` and publishes these tags automatically:
 
-```sh
-docker buildx build --platform linux/amd64 -f docker/Dockerfile -t REGISTRY/codex-microvm:latest --push .
+```text
+ghcr.io/udienz/codex-microvm:latest
+ghcr.io/udienz/codex-microvm:<commit-sha>
 ```
+
+Run it from **Actions → Docker publish to GHCR → Run workflow**. It authenticates using the repository-scoped `GITHUB_TOKEN`; no DigitalOcean registry token is needed. The first package is private by default. Before deploying, ensure the MicroVM can authenticate to pull this private image, or explicitly change the package visibility if public access is acceptable.
 
 Do not pass Codex credentials, DigitalOcean tokens, or the API bearer token as build arguments or bake them into the image.
 
