@@ -2,19 +2,18 @@
 
 ## Submit a task
 
-Both authorization layers are required: the DigitalOcean endpoint token and the application bearer token.
+Both authorization layers are required:
+- DigitalOcean endpoint authentication uses `Authorization: Bearer $DIGITALOCEAN_TOKEN`.
+- The application token uses `X-API-Key: $API_BEARER_TOKEN`.
 
 ```sh
 curl --no-buffer \
   -H "Authorization: Bearer $DIGITALOCEAN_TOKEN" \
-  -H "X-Unused-Example: remove-me" \
-  -H "Authorization: Bearer $API_BEARER_TOKEN" \
+  -H "X-API-Key: $API_BEARER_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"prompt":"Inspect this workspace and summarize its contents."}' \
   "https://MICROVM_ID.mkc1.microvm.ondigitalocean.com/v1/tasks"
 ```
-
-Because the endpoint and application currently both use the Authorization header, use a trusted reverse proxy/client capable of forwarding the DigitalOcean endpoint credential while providing the application credential separately, or adapt the app to accept a dedicated application header. The recommended configuration is to use `X-API-Key` for the application token; the starter API will be updated to that convention before production use.
 
 The response is Server-Sent Events. Each `codex` event contains one JSONL line from `codex exec --json`, followed by a `done` event with the exit code.
 
@@ -37,7 +36,7 @@ doctl compute microvm resume MICROVM_ID
 
 ## Important limitations
 
-- The API currently streams task output directly; it does not provide a durable task queue or history.
-- One task is launched per request. Add concurrency limits and per-task timeouts before exposing it to multiple users.
+- The API streams task output directly; it does not provide a durable task queue or history.
+- The starter has a per-task timeout but no persistent job scheduler or multi-user queue. Keep it private and restrict who can submit tasks.
 - A browser terminal is not included. DigitalOcean's console WebSocket requires an Authorization header that browsers cannot set.
 - Do not expose the MicroVM endpoint or application token publicly without an additional access-control layer.
