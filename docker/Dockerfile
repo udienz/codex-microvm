@@ -21,6 +21,7 @@ COPY api/requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir -r /app/requirements.txt
 
 COPY api/app.py /app/app.py
+COPY api/web /app/web
 COPY docker/entrypoint.sh /app/entrypoint.sh
 RUN chmod 0755 /app/entrypoint.sh
 
