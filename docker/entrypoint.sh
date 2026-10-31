@@ -8,4 +8,4 @@ if [ -z "${API_BEARER_TOKEN:-}" ]; then
   exit 1
 fi
 
-exec uvicorn app:app --host 0.0.0.0 --port 8080
+exec uvicorn app:app --app-dir /app --host 0.0.0.0 --port 8080
