@@ -7,8 +7,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends ca-certificates curl git nodejs npm tini \
-    && npm install --global @openai/codex \
-    && apt-get purge -y npm \
+    && npm install --global --prefix /usr/local @openai/codex \
     && rm -rf /var/lib/apt/lists/*
 
 RUN useradd --create-home --shell /bin/bash codex \
