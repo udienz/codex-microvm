@@ -1,9 +1,9 @@
 # Authentication
 
-There are two independent credentials:
+There are two independent HTTP credentials:
 
-1. **DigitalOcean endpoint token** — send as `Authorization: Bearer ...` to the MicroVM hostname. Give this token only the `microvm:access` scope.
-2. **Application API token** — set `API_BEARER_TOKEN` when creating the MicroVM. Send it to `POST /v1/tasks` as a Bearer token. Use a long random value and keep it outside source control.
+1. **DigitalOcean endpoint token** — sent as `Authorization: Bearer ...` to the MicroVM hostname. Give this token only the `microvm:access` scope.
+2. **Application API token** — set `API_BEARER_TOKEN` when creating the MicroVM. Send it to `POST /v1/tasks` in the `X-API-Key` header. Use a long random value and keep it outside source control.
 
 Codex itself must be authenticated separately inside the MicroVM:
 
@@ -13,6 +13,6 @@ codex login --device-auth
 codex login status
 ```
 
-Use the ChatGPT sign-in option if available for the account and plan, or configure an API key according to the current Codex CLI documentation. Plan entitlements and usage limits apply. Do not assume that a ChatGPT Free account includes Codex access.
+Complete the device flow in a trusted browser. Codex also supports API-key authentication; consult the current Codex CLI documentation for the supported sign-in methods. Plan entitlements and usage limits apply; do not assume every ChatGPT plan includes Codex access.
 
 The Codex auth directory defaults to `/home/codex/.codex`. It is sensitive persistent state. Anyone who can access it may be able to use the signed-in Codex account.
