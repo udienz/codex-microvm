@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101827">
+  <title>Claude Blog Web Studio</title>
+  <link rel="stylesheet" href="/assets/style.css">
+</head>
+<body>
+  <main class="shell">
+    <section id="login-view" class="login-card" hidden>
+      <div class="brand-mark">CB</div>
+      <p class="eyebrow">PRIVATE WORKSPACE</p>
+      <h1>Claude Blog<br>Web Studio</h1>
+      <p class="muted">Ruang kerja pribadi untuk menjelajahi dan mengelola skill blog.</p>
+      <form id="login-form">
+        <label for="password">Studio password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required autofocus>
+        <button type="submit">Masuk ke studio <span>→</span></button>
+        <p id="login-error" class="error" role="alert"></p>
+      </form>
+    </section>
+
+    <section id="dashboard-view" hidden>
+      <header class="topbar">
+        <div class="brand"><div class="brand-mark small">CB</div><span>Claude Blog <b>Studio</b></span></div>
+        <button id="logout-button" class="ghost" type="button">Keluar</button>
+      </header>
+      <section class="welcome">
+        <p class="eyebrow">PRIVATE WORKSPACE · STAGE 01</p>
+        <h1>Selamat datang kembali.</h1>
+        <p class="muted">Fondasi ruang kerja pribadimu sudah aktif. Kita bangun katalog skill di tahap berikutnya.</p>
+      </section>
+      <section class="grid">
+        <article class="panel primary">
+          <div class="panel-icon">⌘</div>
+          <p class="eyebrow">PROJECT</p>
+          <h2>Claude Blog</h2>
+          <p class="muted">Sumber skill yang akan dihubungkan ke studio.</p>
+          <span class="status"><i></i> Menunggu integrasi katalog</span>
+        </article>
+        <article class="panel">
+          <div class="panel-icon">▤</div>
+          <p class="eyebrow">SKILL LIBRARY</p>
+          <h2>Belum terhubung</h2>
+          <p class="muted">Tahap 2 akan menampilkan skill, referensi, dan template dari repository.</p>
+          <span class="tag">Tahap berikutnya</span>
+        </article>
+        <article class="panel">
+          <div class="panel-icon">▷</div>
+          <p class="eyebrow">EXECUTION</p>
+          <h2>Dinonaktifkan</h2>
+          <p class="muted">Eksekusi skill baru diaktifkan setelah runtime dan adapter siap.</p>
+          <span class="tag">Belum tersedia</span>
+        </article>
+      </section>
+      <footer>Private by design <span>·</span> Single-user access</footer>
+    </section>
+
+    <section id="setup-view" class="login-card" hidden>
+      <div class="brand-mark">!</div>
+      <p class="eyebrow">SETUP REQUIRED</p>
+      <h1>Studio belum dikonfigurasi.</h1>
+      <p class="muted">Atur STUDIO_PASSWORD_HASH dan STUDIO_SESSION_SECRET pada environment MicroVM, lalu restart layanan.</p>
+    </section>
+  </main>
+  <script src="/assets/app.js" defer></script>
+</body>
+</html>
