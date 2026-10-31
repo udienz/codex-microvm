@@ -1,0 +1,48 @@
+name: Docker build
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docker/**"
+      - "api/**"
+      - ".github/workflows/docker-build.yml"
+  pull_request:
+    paths:
+      - "docker/**"
+      - "api/**"
+      - ".github/workflows/docker-build.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docker-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build linux/amd64 image
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build image (do not publish)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile
+          platforms: linux/amd64
+          push: false
+          tags: codex-microvm:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Check Python syntax
+        run: python -m compileall -q api/app.py
