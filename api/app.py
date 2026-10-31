@@ -40,23 +40,24 @@ async def run_task(request: TaskRequest):
 
     async def events() -> AsyncIterator[str]:
         process = await asyncio.create_subprocess_exec(
-            CODEX_BIN, "exec", "--json", "--sandbox", "workspace-write",
+            CODEX_BIN, "exec", "--json",
+            "--sandbox", "workspace-write",
+            "--ask-for-approval", "never",
             "--cd", WORKSPACE, prompt,
             cwd=WORKSPACE,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
         )
+        assert process.stdout is not None
+        stderr_task = asyncio.create_task(process.stderr.read()) if process.stderr else None
         yield "event: started\ndata: {}\n\n"
-        stderr = b""
         try:
             async with asyncio.timeout(TASK_TIMEOUT_SECONDS):
-                assert process.stdout is not None
                 async for line in process.stdout:
                     payload = line.decode("utf-8", errors="replace").rstrip()
                     yield f"event: codex\ndata: {json.dumps(payload)}\n\n"
                 await process.wait()
-                if process.stderr:
-                    stderr = await process.stderr.read()
+                stderr = await stderr_task if stderr_task else b""
             yield "event: done\ndata: " + json.dumps({
                 "exit_code": process.returncode,
                 "stderr": stderr.decode("utf-8", errors="replace")[-4000:],
@@ -64,16 +65,22 @@ async def run_task(request: TaskRequest):
         except TimeoutError:
             process.kill()
             await process.wait()
+            if stderr_task:
+                await stderr_task
             yield "event: error\ndata: " + json.dumps({
                 "error": f"Task exceeded {TASK_TIMEOUT_SECONDS} seconds"
             }) + "\n\n"
         except asyncio.CancelledError:
             process.kill()
             await process.wait()
+            if stderr_task:
+                await stderr_task
             raise
         except Exception as exc:
             process.kill()
             await process.wait()
+            if stderr_task:
+                await stderr_task
             yield "event: error\ndata: " + json.dumps({"error": str(exc)}) + "\n\n"
 
     return StreamingResponse(
